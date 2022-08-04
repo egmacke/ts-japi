@@ -95,8 +95,11 @@ export default class Relator<PrimaryType, RelatedType extends Dictionary<any> = 
     return meta;
   }
 
-  /** @internal Creates a {@link Relationship}. */
-  public async getRelationship(data: PrimaryType, relatedDataCache?: Dictionary<any>[]) {
+  /** @internal Creates a {@link Relationship} if possible. */
+  public async getRelationship(
+    data: PrimaryType,
+    relatedDataCache?: Dictionary<any>[]
+  ): Promise<Relationship | undefined> {
     // Initialize options.
     const relationshipOptions: RelationshipOptions = {};
 
@@ -125,6 +128,11 @@ export default class Relator<PrimaryType, RelatedType extends Dictionary<any> = 
     const meta = this.getRelatedMeta(data, relatedData);
     if (meta) relationshipOptions.meta = meta;
 
-    return new Relationship(relationshipOptions);
+    let relationship: Relationship | undefined;
+    if (typeof data !== 'undefined' || links || meta) {
+      relationship = new Relationship(relationshipOptions);
+    }
+
+    return relationship;
   }
 }
